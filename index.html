@@ -14,22 +14,60 @@
             --paralelo: #fff0db;
             --bloqueado: #f2f2f2;
             --tag: #e8eaf6;
+            --header-bg: #ffffff;
         }
 
-        body { font-family: 'Segoe UI', sans-serif; background-color: var(--fondo); color: var(--texto-p); margin: 0; display: flex; flex-direction: column; height: 100vh; }
+        /* Variables Modo Oscuro */
+        [data-theme="dark"] {
+            --fondo: #1a1617;
+            --tarjeta: #2d2426;
+            --borde-soft: #3d3133;
+            --texto-p: #e0d0d2;
+            --primario: #8a6a6e;
+            --aprobado: #2d422f;
+            --paralelo: #4a3a2a;
+            --bloqueado: #221c1d;
+            --tag: #3a3d4a;
+            --header-bg: #251e20;
+        }
+
+        body { 
+            font-family: 'Segoe UI', sans-serif; 
+            background-color: var(--fondo); 
+            color: var(--texto-p); 
+            margin: 0; 
+            display: flex; 
+            flex-direction: column; 
+            height: 100vh; 
+            transition: background-color 0.3s, color 0.3s;
+        }
         
         header { 
-            background: white; padding: 15px 40px; border-bottom: 3px solid var(--primario);
-            display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+            background: var(--header-bg); 
+            padding: 15px 40px; 
+            border-bottom: 3px solid var(--primario);
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
 
+        .header-actions { display: flex; gap: 15px; align-items: center; }
+
         .controles-admin {
-            background: #fff; padding: 15px; border-bottom: 1px solid var(--borde-soft);
+            background: var(--header-bg); 
+            padding: 15px; 
+            border-bottom: 1px solid var(--borde-soft);
             display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;
         }
 
         input, select, button {
-            padding: 8px 12px; border: 1px solid var(--borde-soft); border-radius: 10px; outline: none;
+            padding: 8px 12px; 
+            border: 1px solid var(--borde-soft); 
+            border-radius: 10px; 
+            outline: none;
+            background-color: var(--tarjeta);
+            color: var(--texto-p);
         }
 
         .btn-add { background: var(--primario); color: white; border: none; cursor: pointer; font-weight: bold; }
@@ -38,27 +76,47 @@
         .malla-wrapper { display: flex; overflow-x: auto; padding: 20px; gap: 20px; flex-grow: 1; align-items: flex-start; }
         
         .columna-año { 
-            min-width: 280px; background: rgba(255,255,255,0.7); border: 1px solid var(--borde-soft);
+            min-width: 280px; 
+            background: var(--header-bg); 
+            border: 1px solid var(--borde-soft);
             border-radius: 15px; padding: 15px;
+            opacity: 0.95;
         }
 
         .columna-año h2 { text-align: center; font-size: 0.9rem; color: #b58d94; margin-bottom: 15px; border-bottom: 1px dotted var(--borde-soft); }
 
         .materia { 
-            background: var(--tarjeta); border: 1px solid var(--borde-soft); border-left: 6px solid var(--tag);
+            background: var(--tarjeta); 
+            border: 1px solid var(--borde-soft); 
+            border-left: 6px solid var(--tag);
             border-radius: 10px; padding: 12px; margin-bottom: 12px; cursor: pointer; position: relative;
+            transition: transform 0.2s, background-color 0.2s;
         }
 
         .materia:hover:not(.bloqueada) { transform: translateY(-2px); }
-        .aprobada { background: var(--aprobado) !important; }
-        .paralelo { background: var(--paralelo) !important; }
-        .bloqueada { background: var(--bloqueado); opacity: 0.5; cursor: not-allowed; }
+        .aprobada { background: var(--aprobado) !important; border-left-color: #77b377 !important; }
+        .paralelo { background: var(--paralelo) !important; border-left-color: #d4a373 !important; }
+        .bloqueada { background: var(--bloqueado); opacity: 0.4; cursor: not-allowed; }
 
         .materia-nombre { display: block; font-weight: 600; font-size: 0.72rem; margin-bottom: 5px; }
         .materia-info { display: flex; justify-content: space-between; font-size: 0.6rem; color: #999; }
         
         .btn-del { position: absolute; top: 5px; right: 5px; color: #ffb3ba; border: none; background: none; cursor: pointer; display: none; }
         .materia:hover .btn-del { display: block; }
+
+        .theme-toggle {
+            background: var(--primario);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 35px;
+            height: 35px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
 
         ::-webkit-scrollbar { height: 8px; }
         ::-webkit-scrollbar-thumb { background: var(--primario); border-radius: 10px; }
@@ -72,7 +130,10 @@
         <small>PENSUM 2013 - CARABOBO</small>
     </div>
     <div id="status">0 Materias Listas</div>
-    <button class="btn-reset" onclick="resetAll()" style="background:none; border:1px solid #f7dadd; border-radius:15px; cursor:pointer;">Reiniciar</button>
+    <div class="header-actions">
+        <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">🌙</button>
+        <button class="btn-reset" onclick="resetAll()" style="background:none; border:1px solid #f7dadd; border-radius:15px; cursor:pointer;">Reiniciar</button>
+    </div>
 </header>
 
 <div class="controles-admin">
@@ -92,6 +153,27 @@
 <div class="malla-wrapper" id="mallaContainer"></div>
 
 <script>
+// Manejo de Tema
+function toggleTheme() {
+    const body = document.documentElement;
+    const btn = document.getElementById('themeBtn');
+    if (body.getAttribute('data-theme') === 'dark') {
+        body.removeAttribute('data-theme');
+        btn.innerText = '🌙';
+        localStorage.setItem('theme', 'light');
+    } else {
+        body.setAttribute('data-theme', 'dark');
+        btn.innerText = '☀️';
+        localStorage.setItem('theme', 'dark');
+    }
+}
+
+// Cargar tema guardado
+if (localStorage.getItem('theme') === 'dark') {
+    document.documentElement.setAttribute('data-theme', 'dark');
+    document.getElementById('themeBtn').innerText = '☀️';
+}
+
 // Materias base del Pensum 2013 de la UC
 const baseSubjects = [
     { id: "11", año: 1, nombre: "ANATOMÍA HUMANA", cod: "11", pre: [] },
